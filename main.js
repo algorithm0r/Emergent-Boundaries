@@ -6,8 +6,15 @@ ASSET_MANAGER.downloadAll(() => {
 	const canvas = document.getElementById("gameWorld");
 	const ctx = canvas.getContext("2d");
 	gameEngine.entities = [];
+
+	gameEngine.init(ctx);
+
 	let automata = new Automata();
 	gameEngine.addEntity(automata);
+	const dataManager = new DataManager(automata);
+	gameEngine.addEntity(dataManager);
+	const populationObserver = new PopulationObserver(automata, dataManager);
+	gameEngine.addEntity(populationObserver);
 
 	document.getElementById("plant").addEventListener("click", () => {
 		automata.addRandomPlant();
@@ -27,8 +34,6 @@ ASSET_MANAGER.downloadAll(() => {
 		gameEngine.clearAnimats();
 		automata.clearPlants();
 	});
-
-	gameEngine.init(ctx);
 
 	gameEngine.start();
 });

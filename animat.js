@@ -71,7 +71,7 @@ class Animat {
 		if(this.energy > 80) {
 			this.energy -= 80;
 
-			gameEngine.addEntity(new Animat(this.mutate(),this.automata));
+			this.automata.addAnimat(new Animat(this.mutate(),this.automata));
 		}
 	}
 

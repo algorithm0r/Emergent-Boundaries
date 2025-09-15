@@ -1,10 +1,3 @@
-/** Global Parameters Object */
-const PARAMETERS = {
-    dimension: 100,
-    size: 10, // 1000/dimension
-    
-};
-
 /**
  * @param {Number} n
  * @returns Random Integer Between 0 and n-1
