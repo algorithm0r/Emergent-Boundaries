@@ -6,8 +6,8 @@ class Histogram {
 
         const defaults = {
             label: "",
-            width: PARAMS.graphWidth,
-            height: PARAMS.graphHeight,
+            width: 1000,
+            height: 200,
         };
         Object.assign(this, defaults, options);
 
@@ -17,7 +17,7 @@ class Histogram {
     update() {
     }
     draw(ctx) {
-        if (!document.getElementById("graphs").checked) return;
+        // if (!document.getElementById("graphs").checked) return;
         var length = this.data.length > (this.width) ?
             Math.floor(this.width) : this.data.length;
         var start = this.data.length > (this.width) ?

@@ -2,9 +2,10 @@ class Plant {
 	constructor(other, automata) {
 		this.automata = automata;
 		this.hue = other.hue;
-		
+
 		this.x = other.x;
 		this.y = other.y;
+		this.planter = other.planter;
 
 		this.growth = 0;
 	}	
@@ -29,7 +30,7 @@ class Plant {
 			
 			const other = this.mutate();
 
-			if(!this.automata.plants[other.x][other.y]) {
+			if(typeof(this.automata.plants[other.x][other.y]) !== 'Plant') {
 				this.automata.plants[other.x][other.y] = new Plant (other, this.automata)
 				this.growth -= 80;
 			} 

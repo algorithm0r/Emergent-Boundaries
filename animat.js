@@ -1,8 +1,14 @@
 class Animat {
 	constructor(other, automata) {
+		this.age = 0;
 		this.automata = automata;
 		this.hue = other.hue;
 		this.noise = other.noise;
+
+		this.id = PARAMETERS.agentID++;
+
+		this.foodWeb = new Map();
+		this.visited = new Set();
 		
 		this.x = other.x;
 		this.y = other.y;
@@ -44,6 +50,9 @@ class Animat {
 
 		this.x = x;
 		this.y = y;
+		if(!this.visited.has(`${x},${y}`)) {
+			this.visited.add(`${x},${y}`);
+		}
 	}
 
 	hueDifference (plant) {
@@ -54,16 +63,20 @@ class Animat {
 
 	eat() {
 		const growthrate = parseInt(document.getElementById("animatgrowth").value);
-		const selectivity = parseInt(document.getElementById("animatselection").value);
+		const selectivity = parseFloat(document.getElementById("animatselection").value);
 		const plant = this.automata.plants[this.x][this.y];
 		const diff = this.hueDifference(plant);
 	
 		if(plant && diff >= selectivity) {
+			let plant = this.automata.plants[this.x][this.y];
 			this.automata.plants[this.x][this.y] = null; 
 			let wasteHue = this.normalize(plant.hue + 180 + this.noise, 360);
-			this.automata.wasteList.push({hue:wasteHue,x:this.x,y:this.y});
+			this.automata.wasteList.push({hue:wasteHue,x:this.x,y:this.y, planter:this.id});
 
 			this.energy += 80 / growthrate * diff;
+
+			if(plant.planter)
+				this.foodWeb.set(plant.planter, this.foodWeb.get(plant.planter) + 1 || 1);
 		}
 	}
 
@@ -77,6 +90,7 @@ class Animat {
 
 	die() {
 		this.removeFromWorld = true;
+		// console.log(`Animat ${this.id} died at age ${this.age} having eaten from ${this.foodWeb.size} different animats and visited ${this.visited.size} different cells with energy ${this.energy}.`);
 	}
 
 	mutate() {
@@ -88,10 +102,11 @@ class Animat {
 	}
 
 	update() {
+		this.age++;
 		this.move();
 		this.eat();
 		this.reproduce();
-		if(this.energy < 1 || Math.random() < 0.01) this.die();
+		if(this.energy < 0 || Math.random() < PARAMETERS.animatDeathChance) this.die();
 	}
 
 	draw(ctx) {

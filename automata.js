@@ -3,6 +3,7 @@ class Automata {
 		this.tick = 0;
 		this.plants = [];
 		this.animats = [];
+		this.deadAnimats = [];
 		for(var i = 0; i < PARAMETERS.dimension; i++) {
 			this.plants.push([]);
 			for(var j = 0; j < PARAMETERS.dimension; j++) {
@@ -38,7 +39,7 @@ class Automata {
 
 	processWaste() {
 		this.wasteList.forEach( waste => {
-			this.addPlant(waste.hue, waste.x, waste.y);
+			this.addPlant(waste.hue, waste.x, waste.y, waste.planter);
 		});
 		this.wasteList = [];
 	}
@@ -49,8 +50,12 @@ class Automata {
 		this.addPlant(randomInt(360), i, j);
 	}
 
-	addPlant(hue, x, y) {
-		this.plants[x][y] = new Plant({hue: hue, x:x, y:y}, this)
+	addPlant(hue, x, y, planter) {
+		this.plants[x][y] = new Plant({hue: hue, x:x, y:y, planter:planter}, this)
+	}
+
+	addRock(x, y) {
+		this.plants[x][y] = new Rock({x:x, y:y}, this)
 	}
 
 	addAnimat(animat) {
@@ -64,14 +69,19 @@ class Automata {
 		for(var i = 0; i < PARAMETERS.dimension; i++) {
 			for(var j = 0; j < PARAMETERS.dimension; j++) {
 				this.plants[i][j]?.update();
-				if(Math.random() < 0.001) this.plants[i][j] = null;
+				if(Math.random() < PARAMETERS.plantDeathChance) this.plants[i][j] = null;
 			}
 		}
 		this.animats.forEach( animat => {
 			animat.update();
 		});
+		this.deadAnimats = [];
 		for(let i = this.animats.length - 1; i >= 0; i--) {
-			if(this.animats[i].removeFromWorld) this.animats.splice(i, 1);
+			let animat = this.animats[i];
+			if(animat.removeFromWorld) {
+				this.animats.splice(i, 1);
+				this.deadAnimats.push(animat);
+			}
 		}
 		this.processWaste();
 	}
